@@ -16,8 +16,8 @@ I wanted to lead the development of a lightweight, detail-oriented note-taking a
 ## Contributing
 
 Thank you for your interest in contributing to this project.
+You are welcome to submit a pull request — whether it's for improvements, features, translations, or anything else.
 
-You are welcome to submit a pull request — whether it's for animations, features, optimizations, or anything else.
 
 
 ## Acknowledgements
