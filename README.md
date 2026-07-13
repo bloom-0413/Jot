@@ -19,8 +19,6 @@ Thank you for your interest in contributing to this project.
 
 You are welcome to submit a pull request — whether it's for improvements, features, translations, or anything else.
 
-
-
 ## Acknowledgements
 
 The UI design of Jot is inspired by [Notally](https://github.com/OmGodse/Notally) and [Google Keep](https://play.google.com/store/apps/details?id=com.google.android.keep), with special thanks to [OmGodse](https://github.com/OmGodse).
