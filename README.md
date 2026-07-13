@@ -10,7 +10,7 @@ I wanted to lead the development of a lightweight, detail-oriented note-taking a
 ## Screenshots
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/4df50dc4-c71a-4299-9e40-bef2ae0e9214" width="45%" />
+  <img src="https://github.com/user-attachments/assets/4df50dc4-c71a-4299-9e40-bef2ae0e9214" width="45%" style="margin-right: 20px;" />
   <img src="https://github.com/user-attachments/assets/cb240e28-614e-4238-b1c9-56d776b9abec" width="45%" />
 </p>
 
