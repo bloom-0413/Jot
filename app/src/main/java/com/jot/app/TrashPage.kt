@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.jot.app.behavior.Behavior
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,7 +33,7 @@ fun TrashPage(onOpenDrawer: () -> Unit = {}) {
     NoteListScaffold(
         title = stringResource(R.string.trash),
         onOpenDrawer = onOpenDrawer,
-        loadNotes = { NoteRepository(it).loadTrashedNotes() },
+        loadNotes = { NoteRepository(it).loadTrashedNotes(Behavior.noteSort) },
         emptyIconRes = R.drawable.ic_trash,
         onNoteClick = { note ->
             val intent = Intent(context, CreateNoteActivity::class.java).apply {

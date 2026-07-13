@@ -44,6 +44,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.jot.app.behavior.Behavior
 import com.jot.app.ui.theme.JotTheme
 import com.jot.app.ui.theme.ThemePreferences
 import kotlinx.coroutines.Dispatchers
@@ -86,7 +87,7 @@ fun SearchContent() {
         }
         delay(250)
         withContext(Dispatchers.IO) {
-            results = NoteRepository(context).searchNotes(query)
+            results = NoteRepository(context).searchNotes(query, Behavior.noteSort)
         }
     }
     val hasResults = results.isNotEmpty() && query.isNotBlank()

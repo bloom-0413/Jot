@@ -28,6 +28,7 @@ class BackupActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        registerBackToMainIfNeeded()
 
         val exportLauncher = registerForActivityResult(
             ActivityResultContracts.CreateDocument("application/octet-stream")

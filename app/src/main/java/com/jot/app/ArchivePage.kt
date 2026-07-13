@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.jot.app.behavior.Behavior
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,7 +25,7 @@ fun ArchivePage(onOpenDrawer: () -> Unit = {}) {
     NoteListScaffold(
         title = stringResource(R.string.archive),
         onOpenDrawer = onOpenDrawer,
-        loadNotes = { NoteRepository(it).loadArchivedNotes() },
+        loadNotes = { NoteRepository(it).loadArchivedNotes(Behavior.noteSort) },
         emptyIconRes = R.drawable.ic_archive,
         onNoteClick = { note ->
             val intent = Intent(context, CreateNoteActivity::class.java).apply {

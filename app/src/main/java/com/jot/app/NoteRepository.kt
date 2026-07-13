@@ -10,15 +10,15 @@ import org.json.JSONObject
 class NoteRepository(context: Context) {
     private val prefs = context.getSharedPreferences("notes_prefs", Context.MODE_PRIVATE)
 
-    fun loadNotes(): List<Note> = loadList(KEY_NOTES, parseTrashedAt = false)
+    fun loadNotes(sort: NoteSort): List<Note> = loadList(KEY_NOTES, parseTrashedAt = false, sort = sort)
 
-    fun loadArchivedNotes(): List<Note> = loadList(KEY_ARCHIVE, parseTrashedAt = false)
+    fun loadArchivedNotes(sort: NoteSort): List<Note> = loadList(KEY_ARCHIVE, parseTrashedAt = false, sort = sort)
 
     /**
      * 加载回收站笔记。
      * 若启用了自动清理,会顺带删掉超过 30 天的项(写入 prefs 副作用)。
      */
-    fun loadTrashedNotes(): List<Note> {
+    fun loadTrashedNotes(sort: NoteSort): List<Note> {
         val raw = prefs.getString(KEY_TRASH, "[]") ?: "[]"
         val array = JSONArray(raw)
         val cutoff = System.currentTimeMillis() - TRASH_EXPIRY_MS
@@ -38,11 +38,11 @@ class NoteRepository(context: Context) {
         if (autoDelete && array.length() != remaining.length()) {
             prefs.edit().putString(KEY_TRASH, remaining.toString()).apply()
         }
-        return sortNotes(notes)
+        return sortNotes(notes, sort)
     }
 
     fun addNote(note: Note) {
-        val notes = loadNotes().toMutableList()
+        val notes = loadList(KEY_NOTES, parseTrashedAt = false, sort = NoteSort.UPDATED_AT).toMutableList()
         notes.add(note)
         saveNotes(notes)
     }
@@ -76,10 +76,10 @@ class NoteRepository(context: Context) {
 
     fun restoreFromArchive(id: Long) = moveById(KEY_ARCHIVE, KEY_NOTES, id, trashed = false)
 
-    fun searchNotes(query: String): List<Note> {
+    fun searchNotes(query: String, sort: NoteSort): List<Note> {
         if (query.isBlank()) return emptyList()
         val q = query.lowercase()
-        return loadNotes().filter {
+        return loadList(KEY_NOTES, parseTrashedAt = false, sort = sort).filter {
             it.title.lowercase().contains(q) ||
             it.content.lowercase().contains(q)
         }
@@ -87,7 +87,7 @@ class NoteRepository(context: Context) {
 
     // ---- 通用私有方法 ----
 
-    private fun loadList(key: String, parseTrashedAt: Boolean): List<Note> {
+    private fun loadList(key: String, parseTrashedAt: Boolean, sort: NoteSort): List<Note> {
         val json = prefs.getString(key, "[]") ?: "[]"
         val array = JSONArray(json)
         val notes = mutableListOf<Note>()
@@ -98,7 +98,7 @@ class NoteRepository(context: Context) {
                 else noteFromJson(obj, trashedAt = 0L)
             )
         }
-        return sortNotes(notes)
+        return sortNotes(notes, sort)
     }
 
     private fun noteFromJson(obj: JSONObject, trashedAt: Long) = Note(
@@ -110,7 +110,7 @@ class NoteRepository(context: Context) {
         trashedAt = trashedAt
     )
 
-    private fun sortNotes(notes: List<Note>): List<Note> = when (Behavior.noteSort) {
+    private fun sortNotes(notes: List<Note>, sort: NoteSort): List<Note> = when (sort) {
         NoteSort.CREATED_AT -> notes.sortedByDescending { it.createdAt }
         NoteSort.UPDATED_AT -> notes.sortedByDescending { it.updatedAt }
     }
@@ -139,14 +139,15 @@ class NoteRepository(context: Context) {
     }
 
     private fun upsert(key: String, note: Note, saveTrashedAt: Boolean) {
-        val notes = loadList(key, parseTrashedAt = saveTrashedAt).toMutableList()
+        // 内部 CRUD 只按 id 匹配,排序无意义,传任意值
+        val notes = loadList(key, parseTrashedAt = saveTrashedAt, sort = NoteSort.UPDATED_AT).toMutableList()
         val index = notes.indexOfFirst { it.id == note.id }
         if (index >= 0) notes[index] = note else notes.add(note)
         saveList(key, notes, includeTrashedAt = saveTrashedAt)
     }
 
     private fun deleteById(key: String, id: Long) {
-        val notes = loadList(key, parseTrashedAt = key == KEY_TRASH).toMutableList()
+        val notes = loadList(key, parseTrashedAt = key == KEY_TRASH, sort = NoteSort.UPDATED_AT).toMutableList()
         notes.removeAll { it.id == id }
         saveList(key, notes, includeTrashedAt = key == KEY_TRASH)
     }
@@ -167,12 +168,12 @@ class NoteRepository(context: Context) {
      * [trashed] = true 时,目标为回收站,需带上 trashedAt 时间戳。
      */
     private fun moveById(fromKey: String, toKey: String, id: Long, trashed: Boolean) {
-        val fromNotes = loadList(fromKey, parseTrashedAt = fromKey == KEY_TRASH).toMutableList()
+        val fromNotes = loadList(fromKey, parseTrashedAt = fromKey == KEY_TRASH, sort = NoteSort.UPDATED_AT).toMutableList()
         val note = fromNotes.find { it.id == id } ?: return
         fromNotes.removeAll { it.id == id }
         saveList(fromKey, fromNotes, includeTrashedAt = fromKey == KEY_TRASH)
 
-        val toNotes = loadList(toKey, parseTrashedAt = toKey == KEY_TRASH).toMutableList()
+        val toNotes = loadList(toKey, parseTrashedAt = toKey == KEY_TRASH, sort = NoteSort.UPDATED_AT).toMutableList()
         toNotes.add(
             if (trashed) note.copy(trashedAt = System.currentTimeMillis()) else note
         )
@@ -187,10 +188,11 @@ class NoteRepository(context: Context) {
 
         /**
          * 启动时清理回收站过期项。与 loadTrashedNotes 内部清理逻辑一致。
+         * 排序参数对清理无影响,传入当前用户偏好仅保持一致。
          */
         fun cleanExpiredTrash(context: Context) {
             if (Behavior.trashAutoDelete != TrashAutoDelete.ENABLED) return
-            NoteRepository(context).loadTrashedNotes()
+            NoteRepository(context).loadTrashedNotes(Behavior.noteSort)
         }
     }
 }

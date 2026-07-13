@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.jot.app.behavior.Behavior
 import com.jot.app.ui.theme.JotTheme
 import com.jot.app.ui.theme.ThemePreferences
 
@@ -53,7 +54,7 @@ fun NotesPage(onOpenDrawer: () -> Unit = {}) {
     NoteListScaffold(
         title = stringResource(R.string.notes),
         onOpenDrawer = onOpenDrawer,
-        loadNotes = { NoteRepository(it).loadNotes() },
+        loadNotes = { NoteRepository(it).loadNotes(Behavior.noteSort) },
         emptyIconRes = R.drawable.ic_notes,
         onNoteClick = { note ->
             val intent = Intent(context, CreateNoteActivity::class.java).apply {

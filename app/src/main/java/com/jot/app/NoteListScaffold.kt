@@ -82,23 +82,17 @@ fun NoteListScaffold(
         BackHandler { selectedNoteIds = emptySet() }
     }
 
-    // ON_PAUSE 清空选中(跳转其他页时取消高亮)
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_PAUSE) {
-                selectedNoteIds = emptySet()
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
-    }
-
-    // 首次 + refreshKey 变化 + ON_RESUME 时加载笔记
+    // 单一生命周期观察者:
+    // - ON_PAUSE 清空选中(跳转其他页时取消高亮)
+    // - ON_RESUME 重新加载笔记(配合 refreshKey 用于手动触发刷新)
+    // refreshKey 变化时也会触发首次加载
     DisposableEffect(lifecycleOwner, refreshKey) {
         notes = loadNotes(context)
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                notes = loadNotes(context)
+            when (event) {
+                Lifecycle.Event.ON_PAUSE -> selectedNoteIds = emptySet()
+                Lifecycle.Event.ON_RESUME -> notes = loadNotes(context)
+                else -> {}
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
