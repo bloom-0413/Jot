@@ -12,7 +12,6 @@ I wanted to lead the development of a lightweight, detail-oriented note-taking a
 <p align="center">
   <img src="https://github.com/user-attachments/assets/9238e2aa-fee3-4299-af4a-6455662fcb48" width="30%" />
   <img src="https://github.com/user-attachments/assets/1bc52715-4c91-460f-b295-9951b00a33f6" width="30%" />
-  <img src="https://github.com/user-attachments/assets/b280a8e5-6700-4f00-ab73-d4446cf03e59" width="30%" />
 </p>
 
 ## Acknowledgements
