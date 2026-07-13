@@ -17,6 +17,7 @@
     <string name="auto_keyboard">Auto-show keyboard for new notes</string>
     <string name="trash_auto_delete">Auto-delete trash</string>
     <string name="crash_log">Record crash logs</string>
+    <string name="auto_update">Auto check for updates</string>
     <string name="theme">Theme</string>
     <string name="theme_system">System default</string>
     <string name="theme_light">Light</string>
@@ -48,4 +49,12 @@
     <string name="sort_order">Sort by</string>
     <string name="sort_created">Created time</string>
     <string name="sort_updated">Modified time</string>
+    <string name="check_update">Check for updates</string>
+    <string name="checking_update">Checking…</string>
+    <string name="up_to_date">You\'re up to date</string>
+    <string name="ok">OK</string>
+    <string name="update_available_title">Update available</string>
+    <string name="update_version_message">%1$s → %2$s</string>
+    <string name="update_now">Update</string>
+    <string name="update_later">Skip this version</string>
 </resources>

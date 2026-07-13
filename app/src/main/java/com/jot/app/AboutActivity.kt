@@ -12,13 +12,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -65,6 +71,9 @@ fun AboutScreen(modifier: Modifier = Modifier) {
             "1.0"
         }
     }
+    var checking by remember { mutableStateOf(false) }
+    var updateResult by remember { mutableStateOf<UpdateInfo?>(null) }
+    var showUpToDate by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -98,6 +107,22 @@ fun AboutScreen(modifier: Modifier = Modifier) {
             )
         }
 
+        // 检查更新
+        NavEntryItem(
+            label = stringResource(R.string.check_update),
+            iconRes = R.drawable.ic_update,
+            onClick = {
+                checking = true
+                UpdateChecker.checkForUpdates(context) { info ->
+                    checking = false
+                    if (info != null) {
+                        updateResult = info
+                    } else {
+                        showUpToDate = true
+                    }
+                }
+            }
+        )
         // 问题反馈
         NavEntryItem(
             label = stringResource(R.string.feedback),
@@ -115,6 +140,47 @@ fun AboutScreen(modifier: Modifier = Modifier) {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/bloom-0413/Jot"))
                 context.startActivity(intent)
             }
+        )
+    }
+
+    // 检测中弹窗
+    if (checking) {
+        AlertDialog(
+            onDismissRequest = { checking = false },
+            title = { Text(text = stringResource(R.string.check_update)) },
+            text = { Text(text = stringResource(R.string.checking_update)) },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { checking = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.background,
+            shape = RoundedCornerShape(28.dp)
+        )
+    }
+
+    // 已是最新版
+    if (showUpToDate) {
+        AlertDialog(
+            onDismissRequest = { showUpToDate = false },
+            title = { Text(text = stringResource(R.string.check_update)) },
+            text = { Text(text = stringResource(R.string.up_to_date)) },
+            confirmButton = {
+                TextButton(onClick = { showUpToDate = false }) {
+                    Text(stringResource(R.string.ok))
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.background,
+            shape = RoundedCornerShape(28.dp)
+        )
+    }
+
+    // 发现新版本
+    updateResult?.let { info ->
+        UpdateDialog(
+            info = info,
+            onDismiss = { updateResult = null }
         )
     }
 }

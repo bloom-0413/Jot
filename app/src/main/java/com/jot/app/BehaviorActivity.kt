@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.jot.app.behavior.AutoUpdate
 import com.jot.app.behavior.Behavior
 import com.jot.app.behavior.CrashLog
 import com.jot.app.behavior.NewNoteKeyboard
@@ -58,6 +59,7 @@ fun BehaviorScreen(modifier: Modifier = Modifier) {
     var keyboardEnabled by remember { mutableStateOf(Behavior.newNoteKeyboard == NewNoteKeyboard.ENABLED) }
     var trashAutoDeleteEnabled by remember { mutableStateOf(Behavior.trashAutoDelete == TrashAutoDelete.ENABLED) }
     var crashLogEnabled by remember { mutableStateOf(Behavior.crashLog == CrashLog.ENABLED) }
+    var autoUpdateEnabled by remember { mutableStateOf(Behavior.autoUpdate == AutoUpdate.ENABLED) }
     var currentSort by remember { mutableStateOf(Behavior.noteSort) }
 
     Column(
@@ -91,6 +93,21 @@ fun BehaviorScreen(modifier: Modifier = Modifier) {
             trailing = {
                 Text(
                     text = stringResource(if (trashAutoDeleteEnabled) R.string.enabled else R.string.disabled),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        )
+        NavEntryItem(
+            label = stringResource(R.string.auto_update),
+            iconRes = if (autoUpdateEnabled) R.drawable.ic_update_enabled else R.drawable.ic_update_disabled,
+            onClick = {
+                autoUpdateEnabled = !autoUpdateEnabled
+                Behavior.updateAutoUpdate(if (autoUpdateEnabled) AutoUpdate.ENABLED else AutoUpdate.DISABLED)
+            },
+            trailing = {
+                Text(
+                    text = stringResource(if (autoUpdateEnabled) R.string.enabled else R.string.disabled),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium
                 )

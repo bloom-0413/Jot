@@ -9,6 +9,7 @@ object Behavior {
     private const val KEY_CRASH_LOG = "crash_log"
     private const val KEY_NOTE_SORT = "note_sort"
     private const val KEY_TRASH_AUTO_DELETE = "trash_auto_delete"
+    private const val KEY_AUTO_UPDATE = "auto_update"
 
     private lateinit var prefs: SharedPreferences
 
@@ -16,6 +17,7 @@ object Behavior {
     var crashLog = CrashLog.DISABLED
     var noteSort = NoteSort.UPDATED_AT
     var trashAutoDelete = TrashAutoDelete.ENABLED
+    var autoUpdate = AutoUpdate.ENABLED
 
     fun init(context: Context, overridePrefs: SharedPreferences? = null) {
         prefs = overridePrefs ?: context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -30,6 +32,9 @@ object Behavior {
         )
         trashAutoDelete = enumValueOf<TrashAutoDelete>(
             prefs.getString(KEY_TRASH_AUTO_DELETE, TrashAutoDelete.ENABLED.name)!!
+        )
+        autoUpdate = enumValueOf<AutoUpdate>(
+            prefs.getString(KEY_AUTO_UPDATE, AutoUpdate.ENABLED.name)!!
         )
     }
 
@@ -58,6 +63,13 @@ object Behavior {
         trashAutoDelete = value
         if (::prefs.isInitialized) {
             prefs.edit().putString(KEY_TRASH_AUTO_DELETE, value.name).apply()
+        }
+    }
+
+    fun updateAutoUpdate(value: AutoUpdate) {
+        autoUpdate = value
+        if (::prefs.isInitialized) {
+            prefs.edit().putString(KEY_AUTO_UPDATE, value.name).apply()
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.jot.app
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,14 +13,21 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -41,6 +49,7 @@ class MainActivity : ComponentActivity() {
             val themeMode = ThemePreferences.currentMode()
             JotTheme(themeMode = themeMode) {
                 UnifiedApp()
+                UpdateDialog()
             }
         }
     }
@@ -135,6 +144,69 @@ fun NotesPage(onOpenDrawer: () -> Unit = {}) {
                     contentDescription = stringResource(R.string.create_note),
                     modifier = Modifier.size(28.dp)
                 )
+            }
+        }
+    )
+}
+
+@Composable
+fun UpdateDialog() {
+    val info = UpdateChecker.updateInfo ?: return
+    val context = LocalContext.current
+    UpdateDialog(
+        info = info,
+        onDismiss = { UpdateChecker.dismiss(context) }
+    )
+}
+
+@Composable
+fun UpdateDialog(
+    info: UpdateInfo,
+    onDismiss: () -> Unit
+) {
+    val context = LocalContext.current
+
+    JotAlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = stringResource(R.string.update_available_title)
+            )
+        },
+        text = {
+            Column {
+                Text(
+                    text = stringResource(
+                        R.string.update_version_message,
+                        info.currentVersion,
+                        info.newVersion
+                    )
+                )
+                if (info.releaseNotes.isNotEmpty()) {
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        text = info.releaseNotes,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                        modifier = Modifier.verticalScroll(rememberScrollState())
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                onDismiss()
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(info.releaseUrl)).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                context.startActivity(intent)
+            }) {
+                Text(stringResource(R.string.update_now))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.update_later))
             }
         }
     )

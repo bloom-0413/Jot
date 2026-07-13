@@ -19,3 +19,8 @@ enum class CrashLog {
     ENABLED,
     DISABLED
 }
+
+enum class AutoUpdate {
+    ENABLED,
+    DISABLED
+}

@@ -17,6 +17,7 @@
     <string name="auto_keyboard">新建笔记自动弹出键盘</string>
     <string name="trash_auto_delete">自动清理回收站</string>
     <string name="crash_log">记录崩溃日志</string>
+    <string name="auto_update">自动检查更新</string>
     <string name="theme">主题</string>
     <string name="theme_system">系统默认</string>
     <string name="theme_light">浅色模式</string>
@@ -48,4 +49,12 @@
     <string name="sort_order">排序方式</string>
     <string name="sort_created">创建时间</string>
     <string name="sort_updated">修改时间</string>
+    <string name="check_update">检查更新</string>
+    <string name="checking_update">正在检查…</string>
+    <string name="up_to_date">已是最新版本</string>
+    <string name="ok">确定</string>
+    <string name="update_available_title">发现新版本</string>
+    <string name="update_version_message">%1$s → %2$s</string>
+    <string name="update_now">立即更新</string>
+    <string name="update_later">暂不更新</string>
 </resources>
