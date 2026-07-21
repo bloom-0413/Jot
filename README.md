@@ -13,3 +13,7 @@ Jot（中文名：简记）是一款笔记App
 请前往 [Release 页面](https://github.com/bloom-0413/Jot/releases) 下载最新版本  
 
 由于未满足上架条件，本应用不会发布在 Google Play 及其他应用商店
+
+## 贡献
+本应用目前处于早期开发阶段
+所以，如果你遇到了任何的问题，欢迎使用
