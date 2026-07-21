@@ -26,4 +26,4 @@ Jot（中文名：简记）是一款笔记App
 
 ## 致谢
 
-本应用参考了 [Notally](https://github.com/OmGodse/Notally) 的设计
+本应用参考了 [Notally](https://github.com/OmGodse/Notally) 的界面设计
