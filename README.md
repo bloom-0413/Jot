@@ -1,7 +1,7 @@
 <p align="center">
-  <img src="https://img.shields.io/github/stars/bloom-0413/Jot?style=flat&labelColor=2d2d2d&color=ffcc00" alt="Stars">
-  <img src="https://img.shields.io/github/downloads/bloom-0413/Jot/total?style=flat&labelColor=2d2d2d&color=00cc88" alt="Downloads">
-  <img src="https://img.shields.io/github/v/release/bloom-0413/Jot?style=flat&labelColor=2d2d2d&color=0099ff" alt="Release">
+  <a href="https://github.com/bloom-0413/Jot/stargazers">⭐ Star</a> ·
+  <a href="https://github.com/bloom-0413/Jot/releases">⬇️ 下载</a> ·
+  <a href="https://github.com/bloom-0413/Jot/releases/latest">📦 最新版本</a>
 </p>
 
 ## 关于
