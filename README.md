@@ -22,8 +22,6 @@ Jot（中文名：简记）是一款笔记 App
   <img width="250" alt="截图3" src="https://github.com/user-attachments/assets/4bba0628-eab4-41fa-9655-5897f8fbfb54" />
 </p>
 
-
-
 ## 📦 下载
 
 请前往 [Release 页面](https://github.com/bloom-0413/Jot/releases) 下载最新版本  
