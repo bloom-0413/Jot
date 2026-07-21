@@ -36,6 +36,6 @@ Jot（中文名：简记）是一款笔记 App
 
 ## 🎉 致谢
 
-本应用在很大程度上参考了 [Notally](https://github.com/OmGodse/Notally) 的界面设计，在此特别感谢 [OmGodse](https://github.com/OmGodse)
+1. 图标来自 [Material Design Icons](https://fonts.google.com/icons)
 
-图标来自 [Material Design Icons](https://fonts.google.com/icons)
+2. 本应用在很大程度上参考了 [Notally](https://github.com/OmGodse/Notally) 的界面设计，在此特别感谢 [OmGodse](https://github.com/OmGodse)
