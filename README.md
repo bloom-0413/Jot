@@ -1,6 +1,6 @@
 <div align="center">
 
-![Stars](https://img.shields.io/github/stars/bloom-0413/Jot)
+![Stars](https://img.shields.io/github/stars/bloom-0413/Jot?style=social)
 </div>
 
 ## 关于
