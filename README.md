@@ -1,6 +1,7 @@
 <div align="center">
-
-![Stars](https://img.shields.io/github/stars/bloom-0413/Jot?style=social)
+![Stars](https://img.shields.io/github/stars/bloom-0413/Jot?style=flat-square&color=f18cb9)
+![Downloads](https://img.shields.io/github/downloads/bloom-0413/Jot/total?style=flat-square&color=f18cb9)
+![Release](https://img.shields.io/github/v/release/bloom-0413/Jot?style=flat-square&color=f18cb9)
 </div>
 
 ## 关于
