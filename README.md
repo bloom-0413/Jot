@@ -1,7 +1,7 @@
 <p align="center">
-  <img src="https://img.shields.io/github/v/release/bloom-0413/Jot?style=plastic&color=f18cb9" alt="Release">
-  <img src="https://img.shields.io/github/downloads/bloom-0413/Jot/total?style=plastic&color=f18cb9" alt="Downloads">
-  <img src="https://img.shields.io/github/stars/bloom-0413/Jot?style=plastic&color=f18cb9" alt="Stars">
+  <img src="https://img.shields.io/github/stars/bloom-0413/Jot" alt="Stars">
+  <img src="https://img.shields.io/github/downloads/bloom-0413/Jot/total" alt="Downloads">
+  <img src="https://img.shields.io/github/v/release/bloom-0413/Jot" alt="Release">
 </p>
 
 ## 关于
