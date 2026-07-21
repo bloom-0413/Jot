@@ -1,9 +1,6 @@
 <div align="center">
 
-![Stars](https://img.shields.io/github/stars/bloom-0413/Jot?style=plastic&color=yellow)
-![版本](https://img.shields.io/github/v/release/bloom-0413/Jot?style=plastic)
-![许可证](https://img.shields.io/github/license/bloom-0413/Jot?style=plastic)
-
+![Stars](https://img.shields.io/github/stars/bloom-0413/Jot?style=social)
 </div>
 
 ## 关于
