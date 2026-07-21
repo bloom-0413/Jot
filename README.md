@@ -35,6 +35,6 @@ Jot（中文名：简记）是一款笔记 App
 欢迎提交 [Issue](https://github.com/bloom-0413/Jot/issues) 或 [Pull Request](https://github.com/bloom-0413/Jot/pulls)
 
 ## 🎉 致谢
+图标来自 [Material Design Icons](https://fonts.google.com/icons)  
 
-- 图标来自 [Material Design Icons](https://fonts.google.com/icons)
-- 本应用在很大程度上参考了 [Notally](https://github.com/OmGodse/Notally) 的界面设计，在此特别感谢 [OmGodse](https://github.com/OmGodse)
+本应用在很大程度上参考了 [Notally](https://github.com/OmGodse/Notally) 的界面设计，在此特别感谢 [OmGodse](https://github.com/OmGodse)
