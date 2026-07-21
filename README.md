@@ -10,5 +10,5 @@ Jot（中文名：简记）是一款笔记App
 5. 支持归档笔记
 
 ## 下载应用
-请前往 [Release 页面](https://github.com/bloom-0413/Jot/releases) 下载最新版本
-
+请前往 [Release 页面](https://github.com/bloom-0413/Jot/releases) 下载最新版本  
+本应用由于门槛原因不会上架 GooglePlay 以及各大应用市场
