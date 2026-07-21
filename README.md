@@ -1,4 +1,4 @@
-![Stars](https://img.shields.io/github/stars/bloom-0413/Jot?style=flat-square&color=yellow)
+![Stars](https://img.shields.io/github/stars/bloom-0413/Jot?style=plastic&color=yellow)
 
 ## 关于
 Jot（中文名：简记）是一款笔记App  
