@@ -1,14 +1,16 @@
-<div align="center">
-![Stars](https://img.shields.io/github/stars/bloom-0413/Jot?style=flat-square&color=f18cb9)
-![Downloads](https://img.shields.io/github/downloads/bloom-0413/Jot/total?style=flat-square&color=f18cb9)
-![Release](https://img.shields.io/github/v/release/bloom-0413/Jot?style=flat-square&color=f18cb9)
-</div>
+<p align="center">
+  <img src="https://img.shields.io/github/stars/bloom-0413/Jot?style=flat-square&color=f18cb9" alt="Stars">
+  <img src="https://img.shields.io/github/downloads/bloom-0413/Jot/total?style=flat-square&color=f18cb9" alt="Downloads">
+  <img src="https://img.shields.io/github/v/release/bloom-0413/Jot?style=flat-square&color=f18cb9" alt="Release">
+</p>
 
 ## 关于
+
 Jot（中文名：简记）是一款笔记App  
 适用于 Android12 及以上的系统
 
 ## 特性
+
 1. 无广告、无追踪、无内购
 2. 使用 Material Design 3 设计
 3. 体积轻量（仅2.5MB）
@@ -17,13 +19,14 @@ Jot（中文名：简记）是一款笔记App
 6. 支持归档笔记
 
 ## 下载
+
 请前往 [Release 页面](https://github.com/bloom-0413/Jot/releases) 下载最新版本  
 
 由于未满足上架条件，本应用不会发布在 Google Play 及其他应用商店
 
 ## 贡献
+
 本应用处于早期开发阶段
 
 欢迎提交 [Issue](https://github.com/bloom-0413/Jot/issues) 或 [Pull Request](https://github.com/bloom-0413/Jot/pulls)
-
 ## 致谢
