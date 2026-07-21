@@ -1,7 +1,7 @@
 <p align="center">
-  <img src="https://img.shields.io/github/stars/bloom-0413/Jot?style=flat-square&color=f18cb9" alt="Stars">
-  <img src="https://img.shields.io/github/downloads/bloom-0413/Jot/total?style=flat-square&color=f18cb9" alt="Downloads">
-  <img src="https://img.shields.io/github/v/release/bloom-0413/Jot?style=flat-square&color=f18cb9" alt="Release">
+  <img src="https://img.shields.io/github/v/release/bloom-0413/Jot?style=plastic&color=f18cb9" alt="Release">
+  <img src="https://img.shields.io/github/downloads/bloom-0413/Jot/total?style=plastic&color=f18cb9" alt="Downloads">
+  <img src="https://img.shields.io/github/stars/bloom-0413/Jot?style=plastic&color=f18cb9" alt="Stars">
 </p>
 
 ## 关于
@@ -28,5 +28,6 @@ Jot（中文名：简记）是一款笔记App
 
 本应用处于早期开发阶段
 
+欢迎提交 [Issue](https://github.com/bloom-0413/Jot/issues) 或 [Pull Request](https://github.com/bloom-0413/Jot/pulls)
 欢迎提交 [Issue](https://github.com/bloom-0413/Jot/issues) 或 [Pull Request](https://github.com/bloom-0413/Jot/pulls)
 ## 致谢
