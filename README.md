@@ -7,13 +7,13 @@ Jot（中文名：简记）是一款笔记 App
 
 ## 🛠️ 特性
 
-1. 无广告、无追踪、无内购
-2. 使用 Material Design 3 设计
-3. 恰到好处的动画
-4. 体积轻量（仅 2.5 MB）
-5. 支持本地备份
-6. 支持在线更新
-7. 支持归档笔记
+- 无广告、无追踪、无内购
+- 使用 Material Design 3 设计
+- 恰到好处的动画
+- 体积轻量（仅 2.5 MB）
+- 支持本地备份
+- 支持在线更新
+- 支持归档笔记
 
 ## 🖼️ 截图
 <p align="center">
@@ -36,6 +36,5 @@ Jot（中文名：简记）是一款笔记 App
 
 ## 🎉 致谢
 
-1. 图标来自 [Material Design Icons](https://fonts.google.com/icons)
-
-2. 本应用在很大程度上参考了 [Notally](https://github.com/OmGodse/Notally) 的界面设计，在此特别感谢 [OmGodse](https://github.com/OmGodse)
+- 图标来自 [Material Design Icons](https://fonts.google.com/icons)
+- 本应用在很大程度上参考了 [Notally](https://github.com/OmGodse/Notally) 的界面设计，在此特别感谢 [OmGodse](https://github.com/OmGodse)
