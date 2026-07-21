@@ -1,2 +1,2 @@
 # 项目介绍
-Jot为一个适用于Android平台的笔记app
+该项目是一个笔记App，适用于Android平台
