@@ -1,9 +1,3 @@
-<p align="center">
-  <a href="https://github.com/bloom-0413/Jot/stargazers">⭐ Star</a> ·
-  <a href="https://github.com/bloom-0413/Jot/releases">⬇️ 下载</a> ·
-  <a href="https://github.com/bloom-0413/Jot/releases/latest">📦 最新版本</a>
-</p>
-
 ## 关于
 
 Jot（中文名：简记）是一款笔记App  
