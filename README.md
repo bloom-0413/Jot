@@ -1,3 +1,5 @@
+![Stars](https://img.shields.io/github/stars/bloom-0413/Jot?style=flat-square&color=yellow)
+
 ## 关于
 Jot（中文名：简记）是一款笔记App  
 适用于 Android12 及以上的系统
