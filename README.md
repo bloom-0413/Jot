@@ -20,4 +20,4 @@ Jot（中文名：简记）是一款笔记App
 
 欢迎提交 [Issue](https://github.com/bloom-0413/Jot/issues) 或 [Pull Request](https://github.com/bloom-0413/Jot/pulls)
 
-## 鸣谢
+## 致谢
