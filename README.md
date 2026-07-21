@@ -17,9 +17,9 @@ Jot（中文名：简记）是一款笔记 App
 
 ## 🖼️ 截图
 <p align="center">
-  <img width="32%" alt="截图1" src="https://github.com/user-attachments/assets/916e7d31-bada-4f36-87bb-d123dfa81b1e" />
-  <img width="32%" alt="截图2" src="https://github.com/user-attachments/assets/608d338b-0a01-435e-8698-5f0c052bf92b" />
-  <img width="32%" alt="截图3" src="https://github.com/user-attachments/assets/4bba0628-eab4-41fa-9655-5897f8fbfb54" />
+  <img width="32%" alt="主页" src="https://github.com/user-attachments/assets/916e7d31-bada-4f36-87bb-d123dfa81b1e" />
+  <img width="32%" alt="设置" src="https://github.com/user-attachments/assets/608d338b-0a01-435e-8698-5f0c052bf92b" />
+  <img width="32%" alt="关于" src="https://github.com/user-attachments/assets/4bba0628-eab4-41fa-9655-5897f8fbfb54" />
 </p>
 
 ## 📦 下载
