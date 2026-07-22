@@ -26,18 +26,18 @@ Jot（中文名：简记）是一款笔记 App
 
 请前往 [Release 页面](https://github.com/bloom-0413/Jot/releases) 下载最新版本  
 
-由于未满足上架条件，本项目**不会发布在** Google Play 及其他应用商店
+由于未满足上架条件，本应用**不会发布在** Google Play 及其他应用商店
 
 ## 🤝 贡献
 
-**本项目目前处于早期开发阶段**
+**本应用目前处于早期开发阶段**
 
 欢迎提交 [Issue](https://github.com/bloom-0413/Jot/issues) 或 [Pull Request](https://github.com/bloom-0413/Jot/pulls)
 
 ## 🎉 致谢
 图标来自 [Material Symbols & Icons](https://fonts.google.com/icons)  
 
-本项目在很大程度上参考了 [Notally](https://github.com/OmGodse/Notally) 的界面设计，在此特别感谢 [OmGodse](https://github.com/OmGodse)
+本应用在很大程度上参考了 [Notally](https://github.com/OmGodse/Notally) 的界面设计，在此特别感谢 [OmGodse](https://github.com/OmGodse)
 
 ## ✨ 结语
 在最后的最后：  
