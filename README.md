@@ -28,9 +28,6 @@ Jot（中文名：简记）是一款笔记 App
 
 由于未满足上架条件，本应用不会发布在 Google Play 及其他应用商店
 
-## 📜 许可
-本项目基于 [GPL-3.0 协议](https://github.com/bloom-0413/Jot/blob/main/LICENSE) 开源
-
 ## 🤝 贡献
 
 本应用目前处于早期开发阶段
