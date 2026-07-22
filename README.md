@@ -3,7 +3,9 @@
 Jot（中文名：简记）是一款笔记 App
 
 基于 Kotlin + Jetpack Compose 构建  
-适用于 Android 12 及以上的系统
+适用于 Android 12 及以上的系统  
+
+如果这个项目对你有帮助，欢迎点击右上角 ⭐ Star 支持一下！
 
 ## 🛠️ 特性
 
