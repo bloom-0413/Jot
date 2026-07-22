@@ -30,7 +30,7 @@ Jot（中文名：简记）是一款笔记 App
 
 ## 🤝 贡献
 
-**本应用目前处于早期开发阶段，若你遇到任何问题，请↓**
+**本应用目前处于早期开发阶段**
 
 欢迎提交 [Issue](https://github.com/bloom-0413/Jot/issues) 或 [Pull Request](https://github.com/bloom-0413/Jot/pulls)
 
