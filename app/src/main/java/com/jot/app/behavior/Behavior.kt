@@ -38,38 +38,16 @@ object Behavior {
         )
     }
 
-    fun updateNewNoteKeyboard(value: NewNoteKeyboard) {
-        newNoteKeyboard = value
-        if (::prefs.isInitialized) {
-            prefs.edit().putString(KEY_NEW_NOTE_KEYBOARD, value.name).apply()
-        }
-    }
+    fun updateNewNoteKeyboard(value: NewNoteKeyboard) = savePref(KEY_NEW_NOTE_KEYBOARD, value) { newNoteKeyboard = it }
+    fun updateCrashLog(value: CrashLog) = savePref(KEY_CRASH_LOG, value) { crashLog = it }
+    fun updateNoteSort(value: NoteSort) = savePref(KEY_NOTE_SORT, value) { noteSort = it }
+    fun updateTrashAutoDelete(value: TrashAutoDelete) = savePref(KEY_TRASH_AUTO_DELETE, value) { trashAutoDelete = it }
+    fun updateAutoUpdate(value: AutoUpdate) = savePref(KEY_AUTO_UPDATE, value) { autoUpdate = it }
 
-    fun updateCrashLog(value: CrashLog) {
-        crashLog = value
+    private fun <T : Enum<T>> savePref(key: String, value: T, setter: (T) -> Unit) {
+        setter(value)
         if (::prefs.isInitialized) {
-            prefs.edit().putString(KEY_CRASH_LOG, value.name).apply()
-        }
-    }
-
-    fun updateNoteSort(value: NoteSort) {
-        noteSort = value
-        if (::prefs.isInitialized) {
-            prefs.edit().putString(KEY_NOTE_SORT, value.name).apply()
-        }
-    }
-
-    fun updateTrashAutoDelete(value: TrashAutoDelete) {
-        trashAutoDelete = value
-        if (::prefs.isInitialized) {
-            prefs.edit().putString(KEY_TRASH_AUTO_DELETE, value.name).apply()
-        }
-    }
-
-    fun updateAutoUpdate(value: AutoUpdate) {
-        autoUpdate = value
-        if (::prefs.isInitialized) {
-            prefs.edit().putString(KEY_AUTO_UPDATE, value.name).apply()
+            prefs.edit().putString(key, value.name).apply()
         }
     }
 }

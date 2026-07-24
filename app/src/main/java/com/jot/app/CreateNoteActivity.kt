@@ -194,7 +194,7 @@ class CreateNoteActivity : ComponentActivity() {
 
         val existingNote: Note? = if (isEditing) {
             if (isArchived) {
-                NoteRepository(this).findArchivedNoteById(noteId)
+                NoteRepository(this).findNoteById(noteId)
             } else {
                 NoteRepository(this).findNoteById(noteId)
             }
@@ -310,7 +310,7 @@ fun CreateNoteScreen(
                 )
             },
             textStyle = TextStyle(fontSize = 20.sp),
-            colors = jotTextFieldColors()
+            colors = JotTextFieldColors()
         )
 
         // 笔记内容(带圆角边框,默认延伸到底部)
@@ -331,7 +331,7 @@ fun CreateNoteScreen(
                 )
             },
             textStyle = TextStyle(fontSize = 16.sp),
-            colors = jotTextFieldColors()
+            colors = JotTextFieldColors()
         )
     }
 }
@@ -340,7 +340,7 @@ fun CreateNoteScreen(
  * 标题/正文输入框统一配色:透明容器与下划线,禁用时文字变浅。
  */
 @Composable
-private fun jotTextFieldColors(): TextFieldColors = TextFieldDefaults.colors(
+fun JotTextFieldColors(): TextFieldColors = TextFieldDefaults.colors(
     focusedContainerColor = Color.Transparent,
     unfocusedContainerColor = Color.Transparent,
     disabledContainerColor = Color.Transparent,

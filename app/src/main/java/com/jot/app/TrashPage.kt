@@ -99,7 +99,7 @@ fun TrashPage(onOpenDrawer: () -> Unit = {}) {
                         TextButton(onClick = {
                             val repo = NoteRepository(context)
                             if (pendingSelection.isNotEmpty()) {
-                                pendingSelection.forEach { id -> repo.permanentlyDeleteTrash(id) }
+                                pendingSelection.forEach { id -> repo.deleteNote(id) }
                             } else {
                                 repo.clearAllTrash()
                             }

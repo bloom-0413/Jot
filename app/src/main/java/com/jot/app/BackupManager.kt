@@ -2,7 +2,9 @@ package com.jot.app
 
 import android.content.Context
 import com.jot.app.behavior.Behavior
-import org.json.JSONArray
+import com.jot.app.db.AppDatabase
+import com.jot.app.db.parseNotesFromJson
+import com.jot.app.db.serializeNotesToJson
 import org.json.JSONObject
 import java.io.InputStream
 import java.io.OutputStream
@@ -12,30 +14,20 @@ import java.util.zip.ZipOutputStream
 
 object BackupManager {
 
-    private const val NOTES_PREFS = "notes_prefs"
     private const val BEHAVIOR_PREFS = "behavior_prefs"
-    private const val KEY_NOTES = "notes"
-    private const val KEY_ARCHIVE = "archive"
-    private const val KEY_TRASH = "trash"
+    private const val NOTES_JSON = "notes.json"
+    private const val BEHAVIOR_JSON = "behavior.json"
 
     fun exportBackup(context: Context, outputStream: OutputStream) {
-        val notesPrefs = context.getSharedPreferences(NOTES_PREFS, Context.MODE_PRIVATE)
+        val dao = AppDatabase.getInstance(context).noteDao()
         val behaviorPrefs = context.getSharedPreferences(BEHAVIOR_PREFS, Context.MODE_PRIVATE)
 
         ZipOutputStream(outputStream.buffered()).use { zos ->
-            zos.putNextEntry(ZipEntry("$KEY_NOTES.json"))
-            zos.write(notesPrefs.getString(KEY_NOTES, "[]")!!.toByteArray())
+            zos.putNextEntry(ZipEntry(NOTES_JSON))
+            zos.write(serializeNotesToJson(dao.getAllNotes()).toByteArray())
             zos.closeEntry()
 
-            zos.putNextEntry(ZipEntry("$KEY_ARCHIVE.json"))
-            zos.write(notesPrefs.getString(KEY_ARCHIVE, "[]")!!.toByteArray())
-            zos.closeEntry()
-
-            zos.putNextEntry(ZipEntry("$KEY_TRASH.json"))
-            zos.write(notesPrefs.getString(KEY_TRASH, "[]")!!.toByteArray())
-            zos.closeEntry()
-
-            zos.putNextEntry(ZipEntry("behavior.json"))
+            zos.putNextEntry(ZipEntry(BEHAVIOR_JSON))
             val behavior = JSONObject()
             behaviorPrefs.all.forEach { (key, value) ->
                 behavior.put(key, value.toString())
@@ -46,10 +38,9 @@ object BackupManager {
     }
 
     fun importBackup(context: Context, inputStream: InputStream) {
-        val notesPrefs = context.getSharedPreferences(NOTES_PREFS, Context.MODE_PRIVATE)
+        val dao = AppDatabase.getInstance(context).noteDao()
 
         val data = mutableMapOf<String, String>()
-
         ZipInputStream(inputStream.buffered()).use { zis ->
             var entry = zis.nextEntry
             while (entry != null) {
@@ -62,14 +53,13 @@ object BackupManager {
             }
         }
 
-        val notesJson = data.remove("notes.json") ?: throw IllegalArgumentException("Missing notes.json")
-        val archiveJson = data.remove("archive.json") ?: throw IllegalArgumentException("Missing archive.json")
-        val trashJson = data.remove("trash.json") ?: throw IllegalArgumentException("Missing trash.json")
-        val behaviorJson = data.remove("behavior.json")
+        val notesJson = data.remove(NOTES_JSON) ?: throw IllegalArgumentException("Missing notes.json")
+        val behaviorJson = data.remove(BEHAVIOR_JSON)
 
-        mergeJsonArray(notesPrefs, KEY_NOTES, notesJson)
-        mergeJsonArray(notesPrefs, KEY_ARCHIVE, archiveJson)
-        mergeJsonArray(notesPrefs, KEY_TRASH, trashJson)
+        val existingIds = dao.getAllNotes().map { it.id }.toSet()
+        parseNotesFromJson(notesJson, parseTrashedAt = true)
+            .filter { it.id !in existingIds }
+            .forEach { dao.upsertNote(it) }
 
         if (behaviorJson != null) {
             val behaviorPrefs = context.getSharedPreferences(BEHAVIOR_PREFS, Context.MODE_PRIVATE)
@@ -79,24 +69,5 @@ object BackupManager {
             }
             Behavior.init(context, behaviorPrefs)
         }
-    }
-
-    private fun mergeJsonArray(prefs: android.content.SharedPreferences, key: String, backupJson: String) {
-        val localArray = JSONArray(prefs.getString(key, "[]") ?: "[]")
-        val backupArray = JSONArray(backupJson)
-
-        val localIds = mutableSetOf<Long>()
-        for (i in 0 until localArray.length()) {
-            localIds.add(localArray.getJSONObject(i).getLong("id"))
-        }
-
-        for (i in 0 until backupArray.length()) {
-            val obj = backupArray.getJSONObject(i)
-            if (obj.getLong("id") !in localIds) {
-                localArray.put(obj)
-            }
-        }
-
-        prefs.edit().putString(key, localArray.toString()).apply()
     }
 }

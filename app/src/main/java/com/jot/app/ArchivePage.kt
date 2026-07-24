@@ -55,7 +55,7 @@ fun ArchivePage(onOpenDrawer: () -> Unit = {}) {
                     }
                     IconButton(onClick = {
                         val repo = NoteRepository(context)
-                        selectedNoteIds.forEach { id -> repo.trashArchivedNote(id) }
+                        selectedNoteIds.forEach { id -> repo.trashNote(id) }
                         clearSelection()
                         refresh()
                     }) {
