@@ -12,15 +12,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.jot.app.behavior.Behavior
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArchivePage(onOpenDrawer: () -> Unit = {}) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     NoteListScaffold(
         title = stringResource(R.string.archive),
@@ -42,10 +45,12 @@ fun ArchivePage(onOpenDrawer: () -> Unit = {}) {
             ) {
                 Row {
                     IconButton(onClick = {
-                        val repo = NoteRepository(context)
-                        selectedNoteIds.forEach { id -> repo.restoreFromArchive(id) }
-                        clearSelection()
-                        refresh()
+                        scope.launch {
+                            val repo = NoteRepository(context)
+                            selectedNoteIds.forEach { id -> repo.restoreFromArchive(id) }
+                            clearSelection()
+                            refresh()
+                        }
                     }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_unarchive),
@@ -54,10 +59,12 @@ fun ArchivePage(onOpenDrawer: () -> Unit = {}) {
                         )
                     }
                     IconButton(onClick = {
-                        val repo = NoteRepository(context)
-                        selectedNoteIds.forEach { id -> repo.trashNote(id) }
-                        clearSelection()
-                        refresh()
+                        scope.launch {
+                            val repo = NoteRepository(context)
+                            selectedNoteIds.forEach { id -> repo.trashNote(id) }
+                            clearSelection()
+                            refresh()
+                        }
                     }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_delete),

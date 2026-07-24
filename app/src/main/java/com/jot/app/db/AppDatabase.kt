@@ -21,8 +21,6 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "jot_database"
                 )
-                    .allowMainThreadQueries()
-                    .fallbackToDestructiveMigration()
                     .build()
                     .also { INSTANCE = it }
             }

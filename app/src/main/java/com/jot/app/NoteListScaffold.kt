@@ -20,7 +20,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,7 +53,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 fun NoteListScaffold(
     title: String,
     onOpenDrawer: () -> Unit = {},
-    loadNotes: (Context) -> List<Note>,
+    loadNotes: suspend (Context) -> List<Note>,
     emptyIconRes: Int,
     onNoteClick: (Note) -> Unit,
     modifier: Modifier = Modifier,
@@ -70,8 +72,9 @@ fun NoteListScaffold(
 ) {
     val context = LocalContext.current
     var selectedNoteIds by remember { mutableStateOf(setOf<Long>()) }
-    var refreshKey by remember { mutableStateOf(0) }
+    var refreshKey by remember { mutableIntStateOf(0) }
     var notes by remember { mutableStateOf<List<Note>>(emptyList()) }
+    var lifecycleResumeKey by remember { mutableIntStateOf(0) }
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val hasSelection = selectedNoteIds.isNotEmpty()
@@ -82,16 +85,15 @@ fun NoteListScaffold(
         BackHandler { selectedNoteIds = emptySet() }
     }
 
-    // 单一生命周期观察者:
-    // - ON_PAUSE 清空选中(跳转其他页时取消高亮)
-    // - ON_RESUME 重新加载笔记(配合 refreshKey 用于手动触发刷新)
-    // refreshKey 变化时也会触发首次加载
-    DisposableEffect(lifecycleOwner, refreshKey) {
+    LaunchedEffect(refreshKey, lifecycleResumeKey) {
         notes = loadNotes(context)
+    }
+
+    DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_PAUSE -> selectedNoteIds = emptySet()
-                Lifecycle.Event.ON_RESUME -> notes = loadNotes(context)
+                Lifecycle.Event.ON_RESUME -> lifecycleResumeKey++
                 else -> {}
             }
         }
@@ -167,7 +169,6 @@ fun NoteListScaffold(
                 }
             }
         }
-        // 对话框层(回收站删除确认等)
         dialog(selectedNoteIds, refresh, clearSelection)
     }
 }

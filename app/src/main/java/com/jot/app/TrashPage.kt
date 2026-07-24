@@ -16,18 +16,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.jot.app.behavior.Behavior
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrashPage(onOpenDrawer: () -> Unit = {}) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var showDeleteDialog by remember { mutableStateOf(false) }
-    // 点击删除按钮时快照选中集合,避免对话框显示期间选中被清空导致行为不一致
     var pendingSelection by remember { mutableStateOf<Set<Long>>(emptySet()) }
 
     NoteListScaffold(
@@ -50,10 +52,12 @@ fun TrashPage(onOpenDrawer: () -> Unit = {}) {
                 exit = fadeOut(animationSpec = tween(175, easing = FastOutSlowInEasing))
             ) {
                 IconButton(onClick = {
-                    val repo = NoteRepository(context)
-                    selectedNoteIds.forEach { id -> repo.restoreFromTrash(id) }
-                    clearSelection()
-                    refresh()
+                    scope.launch {
+                        val repo = NoteRepository(context)
+                        selectedNoteIds.forEach { id -> repo.restoreFromTrash(id) }
+                        clearSelection()
+                        refresh()
+                    }
                 }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_restore),
@@ -97,15 +101,17 @@ fun TrashPage(onOpenDrawer: () -> Unit = {}) {
                     },
                     confirmButton = {
                         TextButton(onClick = {
-                            val repo = NoteRepository(context)
-                            if (pendingSelection.isNotEmpty()) {
-                                pendingSelection.forEach { id -> repo.deleteNote(id) }
-                            } else {
-                                repo.clearAllTrash()
+                            scope.launch {
+                                val repo = NoteRepository(context)
+                                if (pendingSelection.isNotEmpty()) {
+                                    pendingSelection.forEach { id -> repo.deleteNote(id) }
+                                } else {
+                                    repo.clearAllTrash()
+                                }
+                                showDeleteDialog = false
+                                clearSelection()
+                                refresh()
                             }
-                            showDeleteDialog = false
-                            clearSelection()
-                            refresh()
                         }) {
                             Text(stringResource(R.string.confirm))
                         }

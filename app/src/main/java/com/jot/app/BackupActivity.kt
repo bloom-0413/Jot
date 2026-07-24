@@ -19,6 +19,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jot.app.ui.theme.JotTheme
 import com.jot.app.ui.theme.ThemePreferences
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -34,13 +37,19 @@ class BackupActivity : ComponentActivity() {
             ActivityResultContracts.CreateDocument("application/octet-stream")
         ) { uri ->
             if (uri != null) {
-                try {
-                    contentResolver.openOutputStream(uri)?.use { outputStream ->
-                        BackupManager.exportBackup(this, outputStream)
+                lifecycleScope.launch(Dispatchers.IO) {
+                    try {
+                        contentResolver.openOutputStream(uri)?.use { outputStream ->
+                            BackupManager.exportBackup(this@BackupActivity, outputStream)
+                        }
+                        launch(Dispatchers.Main) {
+                            Toast.makeText(this@BackupActivity, R.string.export_success, Toast.LENGTH_SHORT).show()
+                        }
+                    } catch (e: Exception) {
+                        launch(Dispatchers.Main) {
+                            Toast.makeText(this@BackupActivity, "${e.message}", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                    Toast.makeText(this, R.string.export_success, Toast.LENGTH_SHORT).show()
-                } catch (e: Exception) {
-                    Toast.makeText(this, "${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -49,13 +58,19 @@ class BackupActivity : ComponentActivity() {
             ActivityResultContracts.OpenDocument()
         ) { uri ->
             if (uri != null) {
-                try {
-                    contentResolver.openInputStream(uri)?.use { inputStream ->
-                        BackupManager.importBackup(this, inputStream)
-                        Toast.makeText(this, R.string.import_success, Toast.LENGTH_SHORT).show()
+                lifecycleScope.launch(Dispatchers.IO) {
+                    try {
+                        contentResolver.openInputStream(uri)?.use { inputStream ->
+                            BackupManager.importBackup(this@BackupActivity, inputStream)
+                        }
+                        launch(Dispatchers.Main) {
+                            Toast.makeText(this@BackupActivity, R.string.import_success, Toast.LENGTH_SHORT).show()
+                        }
+                    } catch (e: Exception) {
+                        launch(Dispatchers.Main) {
+                            Toast.makeText(this@BackupActivity, R.string.import_error, Toast.LENGTH_SHORT).show()
+                        }
                     }
-                } catch (e: Exception) {
-                    Toast.makeText(this, R.string.import_error, Toast.LENGTH_SHORT).show()
                 }
             }
         }

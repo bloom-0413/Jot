@@ -5,17 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.MaterialTheme
@@ -193,10 +190,8 @@ class CreateNoteActivity : ComponentActivity() {
         }
 
         val existingNote: Note? = if (isEditing) {
-            if (isArchived) {
-                NoteRepository(this).findNoteById(noteId)
-            } else {
-                NoteRepository(this).findNoteById(noteId)
+            kotlinx.coroutines.runBlocking(kotlinx.coroutines.Dispatchers.IO) {
+                NoteRepository(this@CreateNoteActivity).findNoteById(noteId)
             }
         } else null
         // 初始化状态供退出时使用
@@ -268,16 +263,6 @@ fun CreateNoteScreen(
     var titleFocused by remember { mutableStateOf(false) }
     var contentFocused by remember { mutableStateOf(false) }
     val titleFocusRequester = remember { FocusRequester() }
-    val titleBorderColor by animateColorAsState(
-        targetValue = if (titleFocused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-        animationSpec = tween(175),
-        label = "titleBorder"
-    )
-    val contentBorderColor by animateColorAsState(
-        targetValue = if (contentFocused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-        animationSpec = tween(175),
-        label = "contentBorder"
-    )
 
     LaunchedEffect(autoFocusTitle) {
         if (autoFocusTitle) {
@@ -300,7 +285,7 @@ fun CreateNoteScreen(
                 .wrapContentHeight()
                 .onFocusChanged { titleFocused = it.isFocused }
                 .focusRequester(titleFocusRequester)
-                .border(1.dp, titleBorderColor, RoundedCornerShape(16.dp)),
+                .focusBorder(titleFocused),
             enabled = !readOnly,
             placeholder = {
                 Text(
@@ -313,7 +298,6 @@ fun CreateNoteScreen(
             colors = JotTextFieldColors()
         )
 
-        // 笔记内容(带圆角边框,默认延伸到底部)
         OutlinedTextField(
             value = content,
             onValueChange = onContentChange,
@@ -321,7 +305,7 @@ fun CreateNoteScreen(
                 .fillMaxWidth()
                 .weight(1f)
                 .onFocusChanged { contentFocused = it.isFocused }
-                .border(1.dp, contentBorderColor, RoundedCornerShape(16.dp)),
+                .focusBorder(contentFocused),
             enabled = !readOnly,
             placeholder = {
                 Text(

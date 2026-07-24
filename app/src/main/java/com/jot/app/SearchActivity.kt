@@ -6,12 +6,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -72,11 +69,6 @@ fun SearchContent() {
     var results by remember { mutableStateOf<List<Note>>(emptyList()) }
     val focusRequester = remember { FocusRequester() }
     var isFocused by remember { mutableStateOf(false) }
-    val borderColor by animateColorAsState(
-        targetValue = if (isFocused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-        animationSpec = tween(175, easing = FastOutSlowInEasing),
-        label = "searchBorder"
-    )
 
     LaunchedEffect(query) {
         if (query.isBlank()) {
@@ -84,9 +76,10 @@ fun SearchContent() {
             return@LaunchedEffect
         }
         delay(250)
-        withContext(Dispatchers.IO) {
-            results = NoteRepository(context).searchNotes(query, Behavior.noteSort)
+        val searchResults = withContext(Dispatchers.IO) {
+            NoteRepository(context).searchNotes(query, Behavior.noteSort)
         }
+        results = searchResults
     }
     val hasResults = results.isNotEmpty() && query.isNotBlank()
     val noTitle = stringResource(R.string.no_title)
@@ -115,7 +108,7 @@ fun SearchContent() {
                     .padding(top = 8.dp, bottom = 12.dp)
                     .align(Alignment.TopCenter)
                     .onFocusChanged { isFocused = it.isFocused }
-                    .border(1.dp, borderColor, RoundedCornerShape(16.dp))
+                    .focusBorder(isFocused)
                     .focusRequester(focusRequester),
                 placeholder = { Text(stringResource(R.string.search_hint)) },
                 singleLine = true,

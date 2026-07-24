@@ -5,48 +5,58 @@ import com.jot.app.behavior.Behavior
 import com.jot.app.behavior.NoteSort
 import com.jot.app.behavior.TrashAutoDelete
 import com.jot.app.db.AppDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 class NoteRepository(context: Context) {
     private val dao = AppDatabase.getInstance(context).noteDao()
 
-    fun loadNotes(sort: NoteSort): List<Note> = sortNotes(dao.loadNotes(), sort)
-
-    fun loadArchivedNotes(sort: NoteSort): List<Note> = sortNotes(dao.loadArchivedNotes(), sort)
-
-    fun loadTrashedNotes(sort: NoteSort): List<Note> {
-        maybeCleanExpiredTrash()
-        return sortNotes(dao.loadTrashedNotes(), sort)
+    suspend fun loadNotes(sort: NoteSort): List<Note> = withContext(Dispatchers.IO) {
+        sortNotes(dao.loadNotes(), sort)
     }
 
-    fun addNote(note: Note) = dao.upsertNote(note)
-
-    fun findNoteById(id: Long): Note? = dao.findNoteById(id)
-
-    fun upsertNote(note: Note) = dao.upsertNote(note)
-
-    fun upsertArchivedNote(note: Note) = dao.upsertNote(note.copy(isArchived = true))
-
-    fun deleteNote(id: Long) = dao.deleteNoteById(id)
-
-    fun trashNote(id: Long) = dao.trashNote(id, System.currentTimeMillis())
-
-    fun restoreFromTrash(id: Long) = dao.restoreFromTrash(id)
-
-    fun clearAllTrash() = dao.clearAllTrash()
-
-    fun archiveNote(id: Long) = dao.archiveNote(id)
-
-    fun restoreFromArchive(id: Long) = dao.restoreFromArchive(id)
-
-    fun searchNotes(query: String, sort: NoteSort): List<Note> {
-        if (query.isBlank()) return emptyList()
-        return sortNotes(dao.searchNotes(query.lowercase()), sort)
+    suspend fun loadArchivedNotes(sort: NoteSort): List<Note> = withContext(Dispatchers.IO) {
+        sortNotes(dao.loadArchivedNotes(), sort)
     }
 
-    private fun maybeCleanExpiredTrash() {
+    suspend fun loadTrashedNotes(sort: NoteSort): List<Note> = withContext(Dispatchers.IO) {
+        cleanupExpiredTrashInternal()
+        sortNotes(dao.loadTrashedNotes(), sort)
+    }
+
+    suspend fun addNote(note: Note) = withContext(Dispatchers.IO) { dao.upsertNote(note) }
+
+    suspend fun findNoteById(id: Long): Note? = withContext(Dispatchers.IO) { dao.findNoteById(id) }
+
+    suspend fun upsertNote(note: Note) = withContext(Dispatchers.IO) { dao.upsertNote(note) }
+
+    suspend fun upsertArchivedNote(note: Note) = withContext(Dispatchers.IO) {
+        dao.upsertNote(note.copy(isArchived = true))
+    }
+
+    suspend fun deleteNote(id: Long) = withContext(Dispatchers.IO) { dao.deleteNoteById(id) }
+
+    suspend fun trashNote(id: Long) = withContext(Dispatchers.IO) {
+        dao.trashNote(id, System.currentTimeMillis())
+    }
+
+    suspend fun restoreFromTrash(id: Long) = withContext(Dispatchers.IO) { dao.restoreFromTrash(id) }
+
+    suspend fun clearAllTrash() = withContext(Dispatchers.IO) { dao.clearAllTrash() }
+
+    suspend fun archiveNote(id: Long) = withContext(Dispatchers.IO) { dao.archiveNote(id) }
+
+    suspend fun restoreFromArchive(id: Long) = withContext(Dispatchers.IO) { dao.restoreFromArchive(id) }
+
+    suspend fun searchNotes(query: String, sort: NoteSort): List<Note> = withContext(Dispatchers.IO) {
+        if (query.isBlank()) return@withContext emptyList()
+        sortNotes(dao.searchNotes(query.lowercase()), sort)
+    }
+
+    private fun cleanupExpiredTrashInternal() {
         if (Behavior.trashAutoDelete != TrashAutoDelete.ENABLED) return
-        val cutoff = System.currentTimeMillis() - TRASH_EXPIRY_MS
-        dao.cleanExpiredTrash(cutoff)
+        dao.cleanExpiredTrash(System.currentTimeMillis() - TRASH_EXPIRY_MS)
     }
 
     private fun sortNotes(notes: List<Note>, sort: NoteSort): List<Note> = when (sort) {
@@ -59,9 +69,10 @@ class NoteRepository(context: Context) {
 
         fun cleanExpiredTrash(context: Context) {
             if (Behavior.trashAutoDelete != TrashAutoDelete.ENABLED) return
-            val dao = AppDatabase.getInstance(context).noteDao()
-            val cutoff = System.currentTimeMillis() - TRASH_EXPIRY_MS
-            dao.cleanExpiredTrash(cutoff)
+            runBlocking(Dispatchers.IO) {
+                val dao = AppDatabase.getInstance(context).noteDao()
+                dao.cleanExpiredTrash(System.currentTimeMillis() - TRASH_EXPIRY_MS)
+            }
         }
     }
 }
