@@ -5,18 +5,19 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.jot.app.Note
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NoteDao {
 
     @Query("SELECT * FROM notes WHERE trashedAt = 0 AND isArchived = 0")
-    fun loadNotes(): List<Note>
+    fun loadNotes(): Flow<List<Note>>
 
     @Query("SELECT * FROM notes WHERE isArchived = 1 AND trashedAt = 0")
-    fun loadArchivedNotes(): List<Note>
+    fun loadArchivedNotes(): Flow<List<Note>>
 
     @Query("SELECT * FROM notes WHERE trashedAt > 0")
-    fun loadTrashedNotes(): List<Note>
+    fun loadTrashedNotes(): Flow<List<Note>>
 
     @Query("SELECT * FROM notes WHERE id = :id")
     fun findNoteById(id: Long): Note?

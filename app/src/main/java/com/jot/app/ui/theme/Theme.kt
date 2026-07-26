@@ -6,9 +6,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
@@ -47,6 +50,7 @@ private val SageLightColorScheme = lightColorScheme(
 @Composable
 fun JotTheme(
     themeMode: ThemeMode = ThemeMode.SYSTEM,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val darkTheme = when (themeMode) {
@@ -67,13 +71,28 @@ fun JotTheme(
         }
     }
 
-    val colorScheme = if (darkTheme) SageDarkColorScheme else SageLightColorScheme
+    val context = LocalContext.current
 
     Crossfade(
-        targetState = colorScheme,
+        targetState = darkTheme,
         animationSpec = tween(300),
         label = "themeCrossfade"
-    ) { scheme ->
+    ) { isDark ->
+        val scheme = if (dynamicColor) {
+            val base = if (isDark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            base.copy(
+                background = if (isDark) SageBackgroundDark else SageBackground,
+                onBackground = if (isDark) SageOnBackgroundDark else SageOnBackground,
+                surface = if (isDark) SageSurfaceDark else SageSurface,
+                onSurface = if (isDark) SageOnSurfaceDark else SageOnSurface,
+                surfaceVariant = if (isDark) SageSurfaceVariantDark else SageSurfaceVariant,
+                onSurfaceVariant = if (isDark) SageOnSurfaceVariantDark else SageOnSurfaceVariant,
+                outline = if (isDark) SageOutlineDark else SageOutline,
+                outlineVariant = if (isDark) SagePlaceholderDark else SagePlaceholder
+            )
+        } else {
+            if (isDark) SageDarkColorScheme else SageLightColorScheme
+        }
         MaterialTheme(
             colorScheme = scheme,
             typography = Typography,

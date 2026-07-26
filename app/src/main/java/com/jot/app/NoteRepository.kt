@@ -6,24 +6,18 @@ import com.jot.app.behavior.NoteSort
 import com.jot.app.behavior.TrashAutoDelete
 import com.jot.app.db.AppDatabase
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class NoteRepository(context: Context) {
     private val dao = AppDatabase.getInstance(context).noteDao()
 
-    suspend fun loadNotes(sort: NoteSort): List<Note> = withContext(Dispatchers.IO) {
-        sortNotes(dao.loadNotes(), sort)
-    }
+    fun loadNotes(sort: NoteSort): Flow<List<Note>> = dao.loadNotes().map { sortNotes(it, sort) }
 
-    suspend fun loadArchivedNotes(sort: NoteSort): List<Note> = withContext(Dispatchers.IO) {
-        sortNotes(dao.loadArchivedNotes(), sort)
-    }
+    fun loadArchivedNotes(sort: NoteSort): Flow<List<Note>> = dao.loadArchivedNotes().map { sortNotes(it, sort) }
 
-    suspend fun loadTrashedNotes(sort: NoteSort): List<Note> = withContext(Dispatchers.IO) {
-        cleanupExpiredTrashInternal()
-        sortNotes(dao.loadTrashedNotes(), sort)
-    }
+    fun loadTrashedNotes(sort: NoteSort): Flow<List<Note>> = dao.loadTrashedNotes().map { sortNotes(it, sort) }
 
     suspend fun addNote(note: Note) = withContext(Dispatchers.IO) { dao.upsertNote(note) }
 
@@ -67,9 +61,9 @@ class NoteRepository(context: Context) {
     companion object {
         private const val TRASH_EXPIRY_MS = 30L * 24 * 60 * 60 * 1000
 
-        fun cleanExpiredTrash(context: Context) {
+        suspend fun cleanExpiredTrash(context: Context) {
             if (Behavior.trashAutoDelete != TrashAutoDelete.ENABLED) return
-            runBlocking(Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 val dao = AppDatabase.getInstance(context).noteDao()
                 dao.cleanExpiredTrash(System.currentTimeMillis() - TRASH_EXPIRY_MS)
             }

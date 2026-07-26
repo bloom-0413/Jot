@@ -19,6 +19,7 @@
     <string name="crash_log">记录崩溃日志</string>
     <string name="auto_update">自动检查更新</string>
     <string name="theme">主题</string>
+    <string name="dynamic_color">壁纸取色</string>
     <string name="theme_system">系统默认</string>
     <string name="theme_light">浅色模式</string>
     <string name="theme_dark">深色模式</string>

@@ -54,7 +54,8 @@ class SearchActivity : ComponentActivity() {
         registerBackToMainIfNeeded()
         setContent {
             val themeMode = ThemePreferences.currentMode()
-            JotTheme(themeMode = themeMode) {
+            val dynamicColor = ThemePreferences.isDynamicColorEnabled()
+            JotTheme(themeMode = themeMode, dynamicColor = dynamicColor) {
                 SearchContent()
             }
         }

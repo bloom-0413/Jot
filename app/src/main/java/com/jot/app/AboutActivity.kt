@@ -24,7 +24,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,7 +46,8 @@ class AboutActivity : ComponentActivity() {
         registerBackToMainIfNeeded()
         setContent {
             val themeMode = ThemePreferences.currentMode()
-            JotTheme(themeMode = themeMode) {
+            val dynamicColor = ThemePreferences.isDynamicColorEnabled()
+            JotTheme(themeMode = themeMode, dynamicColor = dynamicColor) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
@@ -64,6 +67,7 @@ class AboutActivity : ComponentActivity() {
 @Composable
 fun AboutScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val versionName = remember {
         try {
             context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "1.0"
@@ -113,7 +117,8 @@ fun AboutScreen(modifier: Modifier = Modifier) {
             iconRes = R.drawable.ic_update,
             onClick = {
                 checking = true
-                UpdateChecker.checkForUpdates(context) { info ->
+                scope.launch {
+                    val info = UpdateChecker.checkForUpdates(context)
                     checking = false
                     if (info != null) {
                         updateResult = info

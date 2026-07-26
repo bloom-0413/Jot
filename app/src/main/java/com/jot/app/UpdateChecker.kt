@@ -1,11 +1,13 @@
 package com.jot.app
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -28,23 +30,20 @@ object UpdateChecker {
         private set
 
     /** 启动时自动检查（忽略已忽略版本），结果写入 [updateInfo]。 */
-    fun check(context: Context) {
-        Thread {
+    fun check(context: Context, scope: CoroutineScope) {
+        scope.launch(Dispatchers.IO) {
             val info = fetchLatestRelease(context)
             if (info != null) {
                 val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                if (info.newVersion == prefs.getString(KEY_DISMISSED_VERSION, null)) return@Thread
-                Handler(Looper.getMainLooper()).post { updateInfo = info }
+                if (info.newVersion == prefs.getString(KEY_DISMISSED_VERSION, null)) return@launch
+                withContext(Dispatchers.Main) { updateInfo = info }
             }
-        }.start()
+        }
     }
 
-    /** 手动检查更新（忽略忽略列表），通过 [onResult] 返回结果。 */
-    fun checkForUpdates(context: Context, onResult: (UpdateInfo?) -> Unit) {
-        Thread {
-            val info = fetchLatestRelease(context)
-            Handler(Looper.getMainLooper()).post { onResult(info) }
-        }.start()
+    /** 手动检查更新（忽略忽略列表），返回结果。 */
+    suspend fun checkForUpdates(context: Context): UpdateInfo? = withContext(Dispatchers.IO) {
+        fetchLatestRelease(context)
     }
 
     /** 关闭当前更新提示，并记住该版本号，后续启动不再弹窗提醒。 */

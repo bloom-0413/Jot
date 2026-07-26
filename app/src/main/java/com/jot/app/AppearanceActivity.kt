@@ -9,6 +9,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,7 +42,8 @@ class AppearanceActivity : ComponentActivity() {
         registerBackToMainIfNeeded()
         setContent {
             val themeMode = ThemePreferences.currentMode()
-            JotTheme(themeMode = themeMode) {
+            val dynamicColor = ThemePreferences.isDynamicColorEnabled()
+            JotTheme(themeMode = themeMode, dynamicColor = dynamicColor) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
@@ -63,11 +65,13 @@ class AppearanceActivity : ComponentActivity() {
 fun AppearanceScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val currentMode = ThemePreferences.currentMode()
+    val dynamicEnabled = ThemePreferences.isDynamicColorEnabled()
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(12.dp)
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // 主题项(圆角框,点击循环切换: 浅色 → 深色 → 系统 → 浅色)
         Box(
@@ -121,5 +125,21 @@ fun AppearanceScreen(modifier: Modifier = Modifier) {
                     }
                 }
             }
+
+        // 壁纸取色开关
+        NavEntryItem(
+            label = stringResource(R.string.dynamic_color),
+            iconRes = R.drawable.ic_dynamic_color,
+            onClick = {
+                ThemePreferences.setDynamicColorEnabled(context, !dynamicEnabled)
+            },
+            trailing = {
+                Text(
+                    text = stringResource(if (dynamicEnabled) R.string.enabled else R.string.disabled),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        )
     }
 }

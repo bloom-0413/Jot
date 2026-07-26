@@ -2,6 +2,9 @@ package com.jot.app.behavior
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 
 object Behavior {
     private const val PREFS_NAME = "behavior_prefs"
@@ -13,11 +16,16 @@ object Behavior {
 
     private lateinit var prefs: SharedPreferences
 
-    var newNoteKeyboard = NewNoteKeyboard.ENABLED
-    var crashLog = CrashLog.DISABLED
-    var noteSort = NoteSort.UPDATED_AT
-    var trashAutoDelete = TrashAutoDelete.ENABLED
-    var autoUpdate = AutoUpdate.ENABLED
+    var newNoteKeyboard by mutableStateOf(NewNoteKeyboard.ENABLED)
+        private set
+    var crashLog by mutableStateOf(CrashLog.DISABLED)
+        private set
+    var noteSort by mutableStateOf(NoteSort.UPDATED_AT)
+        private set
+    var trashAutoDelete by mutableStateOf(TrashAutoDelete.ENABLED)
+        private set
+    var autoUpdate by mutableStateOf(AutoUpdate.ENABLED)
+        private set
 
     fun init(context: Context, overridePrefs: SharedPreferences? = null) {
         prefs = overridePrefs ?: context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)

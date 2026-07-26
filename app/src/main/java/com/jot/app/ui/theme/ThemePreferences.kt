@@ -16,13 +16,16 @@ enum class ThemeMode(@StringRes val labelRes: Int, val iconRes: Int) {
 object ThemePreferences {
     private const val PREFS_NAME = "theme_prefs"
     private const val KEY_MODE = "theme_mode"
+    private const val KEY_DYNAMIC_COLOR = "dynamic_color"
 
     private lateinit var modeState: MutableState<ThemeMode>
+    private lateinit var dynamicColorState: MutableState<Boolean>
 
     fun init(context: Context) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val savedName = prefs.getString(KEY_MODE, ThemeMode.SYSTEM.name) ?: ThemeMode.SYSTEM.name
         modeState = mutableStateOf(ThemeMode.valueOf(savedName))
+        dynamicColorState = mutableStateOf(prefs.getBoolean(KEY_DYNAMIC_COLOR, false))
     }
 
     fun setMode(context: Context, mode: ThemeMode) {
@@ -33,9 +36,20 @@ object ThemePreferences {
             .apply()
     }
 
+    fun setDynamicColorEnabled(context: Context, enabled: Boolean) {
+        dynamicColorState.value = enabled
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_DYNAMIC_COLOR, enabled)
+            .apply()
+    }
+
     /**
      * 在 Composable 中调用,返回当前主题模式并订阅变化。
      */
     @Composable
     fun currentMode(): ThemeMode = modeState.value
+
+    @Composable
+    fun isDynamicColorEnabled(): Boolean = dynamicColorState.value
 }

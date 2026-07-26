@@ -1,6 +1,5 @@
 package com.jot.app
 
-import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -20,82 +19,55 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import kotlinx.coroutines.flow.Flow
 
-/**
- * 三个笔记列表页(MainActivity / ArchivePage / TrashPage)共享的容器。
- *
- * 内部统一处理:
- * - 选中状态 [Set<Long>]: 长按切换、单击在选中模式下切换、BackHandler 取消选中
- * - ON_PAUSE 时清空选中,避免跳页后遗留
- * - ON_RESUME 时重新加载笔记(配合 [refreshKey] 用于手动触发刷新)
- * - LazyColumn + NoteCard + 统一的 175ms FastOutSlowInEasing 进出场动画
- * - 空状态 Icon(120dp,AnimatedVisibility 淡入)
- *
- * 调用方只需提供: 标题、加载函数、空状态图标、单击(非选中模式)行为,以及可选的顶栏 actions 与 FAB。
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteListScaffold(
     title: String,
     onOpenDrawer: () -> Unit = {},
-    loadNotes: suspend (Context) -> List<Note>,
+    notesFlow: Flow<List<Note>>,
     emptyIconRes: Int,
     onNoteClick: (Note) -> Unit,
     modifier: Modifier = Modifier,
     actions: @Composable (
         hasSelection: Boolean,
         selectedNoteIds: Set<Long>,
-        refresh: () -> Unit,
         clearSelection: () -> Unit
-    ) -> Unit = { _, _, _, _ -> },
+    ) -> Unit = { _, _, _ -> },
     floatingActionButton: @Composable (hasSelection: Boolean) -> Unit = {},
     dialog: @Composable (
         selectedNoteIds: Set<Long>,
-        refresh: () -> Unit,
         clearSelection: () -> Unit
-    ) -> Unit = { _, _, _ -> }
+    ) -> Unit = { _, _ -> }
 ) {
-    val context = LocalContext.current
+    val notes by notesFlow.collectAsState(initial = emptyList())
     var selectedNoteIds by remember { mutableStateOf(setOf<Long>()) }
-    var refreshKey by remember { mutableIntStateOf(0) }
-    var notes by remember { mutableStateOf<List<Note>>(emptyList()) }
-    var lifecycleResumeKey by remember { mutableIntStateOf(0) }
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val hasSelection = selectedNoteIds.isNotEmpty()
-    val refresh: () -> Unit = { refreshKey++ }
     val clearSelection: () -> Unit = { selectedNoteIds = emptySet() }
 
     if (hasSelection) {
         BackHandler { selectedNoteIds = emptySet() }
     }
 
-    LaunchedEffect(refreshKey, lifecycleResumeKey) {
-        notes = loadNotes(context)
-    }
-
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_PAUSE -> selectedNoteIds = emptySet()
-                Lifecycle.Event.ON_RESUME -> lifecycleResumeKey++
-                else -> {}
-            }
+            if (event == Lifecycle.Event.ON_PAUSE) selectedNoteIds = emptySet()
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
@@ -111,7 +83,7 @@ fun NoteListScaffold(
                 JotTopAppBar(
                     title = title,
                     onMenu = onOpenDrawer,
-                    actions = { actions(hasSelection, selectedNoteIds, refresh, clearSelection) }
+                    actions = { actions(hasSelection, selectedNoteIds, clearSelection) }
                 )
             },
             floatingActionButton = { floatingActionButton(hasSelection) }
@@ -169,6 +141,6 @@ fun NoteListScaffold(
                 }
             }
         }
-        dialog(selectedNoteIds, refresh, clearSelection)
+        dialog(selectedNoteIds, clearSelection)
     }
 }

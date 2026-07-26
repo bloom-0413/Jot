@@ -165,7 +165,9 @@ class CreateNoteActivity : ComponentActivity() {
             val viewContent = intent?.getStringExtra(EXTRA_VIEW_CONTENT) ?: ""
 
             setContent {
-                JotTheme(themeMode = ThemePreferences.currentMode()) {
+                val themeMode = ThemePreferences.currentMode()
+                val dynamicColor = ThemePreferences.isDynamicColorEnabled()
+                JotTheme(themeMode = themeMode, dynamicColor = dynamicColor) {
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
                         topBar = {
@@ -200,7 +202,9 @@ class CreateNoteActivity : ComponentActivity() {
         existingCreatedAt = existingNote?.createdAt ?: 0L
 
         setContent {
-            JotTheme(themeMode = ThemePreferences.currentMode()) {
+            val themeMode = ThemePreferences.currentMode()
+            val dynamicColor = ThemePreferences.isDynamicColorEnabled()
+            JotTheme(themeMode = themeMode, dynamicColor = dynamicColor) {
                 var title by remember { mutableStateOf(existingNote?.title ?: "") }
                 var content by remember { mutableStateOf(existingNote?.content ?: "") }
 

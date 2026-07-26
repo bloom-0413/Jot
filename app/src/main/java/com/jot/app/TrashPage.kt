@@ -31,11 +31,13 @@ fun TrashPage(onOpenDrawer: () -> Unit = {}) {
     val scope = rememberCoroutineScope()
     var showDeleteDialog by remember { mutableStateOf(false) }
     var pendingSelection by remember { mutableStateOf<Set<Long>>(emptySet()) }
+    val sort = Behavior.noteSort
+    val notesFlow = remember(sort) { NoteRepository(context).loadTrashedNotes(sort) }
 
     NoteListScaffold(
         title = stringResource(R.string.trash),
         onOpenDrawer = onOpenDrawer,
-        loadNotes = { NoteRepository(it).loadTrashedNotes(Behavior.noteSort) },
+        notesFlow = notesFlow,
         emptyIconRes = R.drawable.ic_trash,
         onNoteClick = { note ->
             val intent = Intent(context, CreateNoteActivity::class.java).apply {
@@ -45,7 +47,7 @@ fun TrashPage(onOpenDrawer: () -> Unit = {}) {
             }
             context.startActivity(intent)
         },
-        actions = { hasSelection, selectedNoteIds, refresh, clearSelection ->
+        actions = { hasSelection, selectedNoteIds, clearSelection ->
             AnimatedVisibility(
                 visible = hasSelection,
                 enter = fadeIn(animationSpec = tween(175, easing = FastOutSlowInEasing)),
@@ -56,7 +58,6 @@ fun TrashPage(onOpenDrawer: () -> Unit = {}) {
                         val repo = NoteRepository(context)
                         selectedNoteIds.forEach { id -> repo.restoreFromTrash(id) }
                         clearSelection()
-                        refresh()
                     }
                 }) {
                     Icon(
@@ -77,7 +78,7 @@ fun TrashPage(onOpenDrawer: () -> Unit = {}) {
                 )
             }
         },
-        dialog = { _, refresh, clearSelection ->
+        dialog = { _, clearSelection ->
             if (showDeleteDialog) {
                 JotAlertDialog(
                     onDismissRequest = { showDeleteDialog = false },
@@ -110,7 +111,6 @@ fun TrashPage(onOpenDrawer: () -> Unit = {}) {
                                 }
                                 showDeleteDialog = false
                                 clearSelection()
-                                refresh()
                             }
                         }) {
                             Text(stringResource(R.string.confirm))

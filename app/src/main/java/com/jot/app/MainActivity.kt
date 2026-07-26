@@ -30,7 +30,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -49,8 +52,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val themeMode = ThemePreferences.currentMode()
-            JotTheme(themeMode = themeMode) {
-                UnifiedApp()
+            val dynamicColor = ThemePreferences.isDynamicColorEnabled()
+            // route 状态放在 Crossfade 外，避免主题切换时遗失
+            var currentRoute by remember { mutableStateOf(AppRoute.NOTES) }
+            JotTheme(themeMode = themeMode, dynamicColor = dynamicColor) {
+                UnifiedApp(
+                    currentRoute = currentRoute,
+                    onNavigate = { currentRoute = it }
+                )
                 UpdateDialog()
             }
         }
@@ -62,11 +71,13 @@ class MainActivity : ComponentActivity() {
 fun NotesPage(onOpenDrawer: () -> Unit = {}) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val sort = Behavior.noteSort
+    val notesFlow = remember(sort) { NoteRepository(context).loadNotes(sort) }
 
     NoteListScaffold(
         title = stringResource(R.string.notes),
         onOpenDrawer = onOpenDrawer,
-        loadNotes = { NoteRepository(it).loadNotes(Behavior.noteSort) },
+        notesFlow = notesFlow,
         emptyIconRes = R.drawable.ic_notes,
         onNoteClick = { note ->
             val intent = Intent(context, CreateNoteActivity::class.java).apply {
@@ -74,7 +85,7 @@ fun NotesPage(onOpenDrawer: () -> Unit = {}) {
             }
             context.startActivity(intent)
         },
-        actions = { hasSelection, selectedNoteIds, refresh, clearSelection ->
+        actions = { hasSelection, selectedNoteIds, clearSelection ->
             Box(Modifier.fillMaxHeight()) {
                 AnimatedVisibility(
                     visible = !hasSelection,
@@ -104,7 +115,6 @@ fun NotesPage(onOpenDrawer: () -> Unit = {}) {
                                 val repo = NoteRepository(context)
                                 selectedNoteIds.forEach { id -> repo.archiveNote(id) }
                                 clearSelection()
-                                refresh()
                             }
                         }) {
                             Icon(
@@ -118,7 +128,6 @@ fun NotesPage(onOpenDrawer: () -> Unit = {}) {
                                 val repo = NoteRepository(context)
                                 selectedNoteIds.forEach { id -> repo.trashNote(id) }
                                 clearSelection()
-                                refresh()
                             }
                         }) {
                             Icon(

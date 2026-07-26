@@ -13,10 +13,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -37,7 +33,8 @@ class BehaviorActivity : ComponentActivity() {
         registerBackToMainIfNeeded()
         setContent {
             val themeMode = ThemePreferences.currentMode()
-            JotTheme(themeMode = themeMode) {
+            val dynamicColor = ThemePreferences.isDynamicColorEnabled()
+            JotTheme(themeMode = themeMode, dynamicColor = dynamicColor) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
@@ -56,12 +53,6 @@ class BehaviorActivity : ComponentActivity() {
 
 @Composable
 fun BehaviorScreen(modifier: Modifier = Modifier) {
-    var keyboardEnabled by remember { mutableStateOf(Behavior.newNoteKeyboard == NewNoteKeyboard.ENABLED) }
-    var trashAutoDeleteEnabled by remember { mutableStateOf(Behavior.trashAutoDelete == TrashAutoDelete.ENABLED) }
-    var crashLogEnabled by remember { mutableStateOf(Behavior.crashLog == CrashLog.ENABLED) }
-    var autoUpdateEnabled by remember { mutableStateOf(Behavior.autoUpdate == AutoUpdate.ENABLED) }
-    var currentSort by remember { mutableStateOf(Behavior.noteSort) }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -72,12 +63,12 @@ fun BehaviorScreen(modifier: Modifier = Modifier) {
             label = stringResource(R.string.auto_keyboard),
             iconRes = R.drawable.ic_keyboard,
             onClick = {
-                keyboardEnabled = !keyboardEnabled
-                Behavior.updateNewNoteKeyboard(if (keyboardEnabled) NewNoteKeyboard.ENABLED else NewNoteKeyboard.DISABLED)
+                val next = if (Behavior.newNoteKeyboard == NewNoteKeyboard.ENABLED) NewNoteKeyboard.DISABLED else NewNoteKeyboard.ENABLED
+                Behavior.updateNewNoteKeyboard(next)
             },
             trailing = {
                 Text(
-                    text = stringResource(if (keyboardEnabled) R.string.enabled else R.string.disabled),
+                    text = stringResource(if (Behavior.newNoteKeyboard == NewNoteKeyboard.ENABLED) R.string.enabled else R.string.disabled),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -87,12 +78,12 @@ fun BehaviorScreen(modifier: Modifier = Modifier) {
             label = stringResource(R.string.trash_auto_delete),
             iconRes = R.drawable.ic_auto_delete,
             onClick = {
-                trashAutoDeleteEnabled = !trashAutoDeleteEnabled
-                Behavior.updateTrashAutoDelete(if (trashAutoDeleteEnabled) TrashAutoDelete.ENABLED else TrashAutoDelete.DISABLED)
+                val next = if (Behavior.trashAutoDelete == TrashAutoDelete.ENABLED) TrashAutoDelete.DISABLED else TrashAutoDelete.ENABLED
+                Behavior.updateTrashAutoDelete(next)
             },
             trailing = {
                 Text(
-                    text = stringResource(if (trashAutoDeleteEnabled) R.string.enabled else R.string.disabled),
+                    text = stringResource(if (Behavior.trashAutoDelete == TrashAutoDelete.ENABLED) R.string.enabled else R.string.disabled),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -100,14 +91,14 @@ fun BehaviorScreen(modifier: Modifier = Modifier) {
         )
         NavEntryItem(
             label = stringResource(R.string.auto_update),
-            iconRes = if (autoUpdateEnabled) R.drawable.ic_update_enabled else R.drawable.ic_update_disabled,
+            iconRes = if (Behavior.autoUpdate == AutoUpdate.ENABLED) R.drawable.ic_update_enabled else R.drawable.ic_update_disabled,
             onClick = {
-                autoUpdateEnabled = !autoUpdateEnabled
-                Behavior.updateAutoUpdate(if (autoUpdateEnabled) AutoUpdate.ENABLED else AutoUpdate.DISABLED)
+                val next = if (Behavior.autoUpdate == AutoUpdate.ENABLED) AutoUpdate.DISABLED else AutoUpdate.ENABLED
+                Behavior.updateAutoUpdate(next)
             },
             trailing = {
                 Text(
-                    text = stringResource(if (autoUpdateEnabled) R.string.enabled else R.string.disabled),
+                    text = stringResource(if (Behavior.autoUpdate == AutoUpdate.ENABLED) R.string.enabled else R.string.disabled),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -117,12 +108,12 @@ fun BehaviorScreen(modifier: Modifier = Modifier) {
             label = stringResource(R.string.sort_order),
             iconRes = R.drawable.ic_sort,
             onClick = {
-                currentSort = if (currentSort == NoteSort.CREATED_AT) NoteSort.UPDATED_AT else NoteSort.CREATED_AT
-                Behavior.updateNoteSort(currentSort)
+                val next = if (Behavior.noteSort == NoteSort.CREATED_AT) NoteSort.UPDATED_AT else NoteSort.CREATED_AT
+                Behavior.updateNoteSort(next)
             },
             trailing = {
                 Text(
-                    text = stringResource(if (currentSort == NoteSort.CREATED_AT) R.string.sort_created else R.string.sort_updated),
+                    text = stringResource(if (Behavior.noteSort == NoteSort.CREATED_AT) R.string.sort_created else R.string.sort_updated),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -132,12 +123,12 @@ fun BehaviorScreen(modifier: Modifier = Modifier) {
             label = stringResource(R.string.crash_log),
             iconRes = R.drawable.ic_report,
             onClick = {
-                crashLogEnabled = !crashLogEnabled
-                Behavior.updateCrashLog(if (crashLogEnabled) CrashLog.ENABLED else CrashLog.DISABLED)
+                val next = if (Behavior.crashLog == CrashLog.ENABLED) CrashLog.DISABLED else CrashLog.ENABLED
+                Behavior.updateCrashLog(next)
             },
             trailing = {
                 Text(
-                    text = stringResource(if (crashLogEnabled) R.string.enabled else R.string.disabled),
+                    text = stringResource(if (Behavior.crashLog == CrashLog.ENABLED) R.string.enabled else R.string.disabled),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium
                 )

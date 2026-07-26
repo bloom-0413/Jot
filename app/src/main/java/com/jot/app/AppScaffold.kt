@@ -55,7 +55,11 @@ enum class AppRoute(val labelRes: Int, val iconRes: Int) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UnifiedApp(modifier: Modifier = Modifier) {
+fun UnifiedApp(
+    currentRoute: AppRoute,
+    onNavigate: (AppRoute) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val density = LocalDensity.current
@@ -68,8 +72,6 @@ fun UnifiedApp(modifier: Modifier = Modifier) {
     val drawerAnimSpec = tween<Float>(durationMillis = 350, easing = FastOutSlowInEasing)
     val crossfadeSpec = tween<Float>(durationMillis = 300, easing = FastOutSlowInEasing)
 
-    var currentRoute by remember { mutableStateOf(AppRoute.NOTES) }
-
     suspend fun openDrawer() = drawerOffset.animateTo(1f, drawerAnimSpec)
     suspend fun closeDrawer() = drawerOffset.animateTo(0f, drawerAnimSpec)
     fun navigateTo(route: AppRoute) {
@@ -79,7 +81,7 @@ fun UnifiedApp(modifier: Modifier = Modifier) {
         }
         scope.launch {
             closeDrawer()
-            currentRoute = route
+            onNavigate(route)
         }
     }
 
@@ -89,7 +91,7 @@ fun UnifiedApp(modifier: Modifier = Modifier) {
     }
     // 不在笔记页且侧边栏已关闭时,系统返回键回到笔记页
     if (drawerOffset.value == 0f && currentRoute != AppRoute.NOTES) {
-        BackHandler { currentRoute = AppRoute.NOTES }
+        BackHandler { onNavigate(AppRoute.NOTES) }
     }
 
     Box(modifier = modifier.fillMaxSize()) {

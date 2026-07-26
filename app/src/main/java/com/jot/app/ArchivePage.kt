@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -24,11 +25,13 @@ import kotlinx.coroutines.launch
 fun ArchivePage(onOpenDrawer: () -> Unit = {}) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val sort = Behavior.noteSort
+    val notesFlow = remember(sort) { NoteRepository(context).loadArchivedNotes(sort) }
 
     NoteListScaffold(
         title = stringResource(R.string.archive),
         onOpenDrawer = onOpenDrawer,
-        loadNotes = { NoteRepository(it).loadArchivedNotes(Behavior.noteSort) },
+        notesFlow = notesFlow,
         emptyIconRes = R.drawable.ic_archive,
         onNoteClick = { note ->
             val intent = Intent(context, CreateNoteActivity::class.java).apply {
@@ -37,7 +40,7 @@ fun ArchivePage(onOpenDrawer: () -> Unit = {}) {
             }
             context.startActivity(intent)
         },
-        actions = { hasSelection, selectedNoteIds, refresh, clearSelection ->
+        actions = { hasSelection, selectedNoteIds, clearSelection ->
             AnimatedVisibility(
                 visible = hasSelection,
                 enter = fadeIn(animationSpec = tween(175, easing = FastOutSlowInEasing)),
@@ -49,7 +52,6 @@ fun ArchivePage(onOpenDrawer: () -> Unit = {}) {
                             val repo = NoteRepository(context)
                             selectedNoteIds.forEach { id -> repo.restoreFromArchive(id) }
                             clearSelection()
-                            refresh()
                         }
                     }) {
                         Icon(
@@ -63,7 +65,6 @@ fun ArchivePage(onOpenDrawer: () -> Unit = {}) {
                             val repo = NoteRepository(context)
                             selectedNoteIds.forEach { id -> repo.trashNote(id) }
                             clearSelection()
-                            refresh()
                         }
                     }) {
                         Icon(
