@@ -12,8 +12,8 @@ android {
         applicationId = "com.jot.app"
         minSdk = 31
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.1.0"
+        versionCode = 3
+        versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resConfigs("zh", "en")
@@ -36,6 +36,7 @@ android {
             // 永远保持 false，编译极快，完全不卡
             isMinifyEnabled = false
             isShrinkResources = false
+            applicationIdSuffix = ".debug"
         }
         release {
             isMinifyEnabled = true
